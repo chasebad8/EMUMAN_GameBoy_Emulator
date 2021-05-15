@@ -1,6 +1,10 @@
-//
-// Created by cb on 2021-05-14.
-//
+#include <stdio.h>
+#include <stdlib.h>
 
+int load_rom(const char* filename)
+{
+
+    return 1;
+}
 
 
