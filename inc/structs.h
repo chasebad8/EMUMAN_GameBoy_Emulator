@@ -3,6 +3,11 @@
 
 #endif //EMUMAN_STRUCTS_H
 
+
+struct RAM {
+    u_int8_t *bootstrap;
+};
+
 /**
  * registers contain information about all
  * of the current values in the registers
@@ -11,43 +16,43 @@ struct REGISTERS {
     struct {
         union {
             struct {
-                uint8_t F;
-                uint8_t A;
+                u_int8_t F;
+                u_int8_t A;
             };
-            uint16_t AF;
+            u_int16_t AF;
         };
     };
 
     struct {
         union {
             struct {
-                uint8_t C;
-                uint8_t B;
+                u_int8_t C;
+                u_int8_t B;
             };
-            uint16_t BC;
+            u_int16_t BC;
         };
     };
 
     struct {
         union {
             struct {
-                uint8_t E;
-                uint8_t D;
+                u_int8_t E;
+                u_int8_t D;
             };
-            uint16_t DE;
+            u_int16_t DE;
         };
     };
 
     struct {
         union {
             struct {
-                uint8_t L;
-                uint8_t H;
+                u_int8_t L;
+                u_int8_t H;
             };
-            uint16_t HL;
+            u_int16_t HL;
         };
     };
 
-    uint16_t SP;
-    uint16_t PC;
-} extern REGISTERS;
+    u_int16_t SP;
+    u_int16_t PC;
+};
