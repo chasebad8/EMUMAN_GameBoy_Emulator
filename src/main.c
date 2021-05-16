@@ -1,25 +1,31 @@
-#include <stdio.h>
+#include <stdlib.h>
+
 #include "../inc/emuman_logs.h"
-#include <time.h>
+#include "../inc/definitions.h"
+#include "../inc/structs.h"
 
-FILE *mmu_fp; //MMU log
-FILE *cpu_fp; //CPU log
+struct RAM ram;
+struct REGISTERS cpu;
+/**
+ * This is currently where the EMUMAN is started.
+ */
+int main()
+{
+    debug_log("MMU", "Starting System");
 
-int main() {
-    //Open logs for writing
-    if(create_logs(&mmu_fp, &cpu_fp) != 1)
-    {
-        fprintf(stderr, "Failed to open log files\n");
+    ram.bootstrap = load_rom("/home/cb/Downloads/DMG_ROM.bin");
+
+    cpu.PC = 0;
+
+    for(;;) {
+        decode(&cpu.PC, ram.bootstrap[cpu.PC]);
+
+        if(cpu.PC > 256)
+        {
+            break;
+        }
     }
-
-    debug_log(mmu_fp, "We have a working log system!!");
-
-
-    //Close all created logs
-    if(close_logs(&mmu_fp, &cpu_fp) != 1)
-    {
-        fprintf(stderr, "Failed to close log files\n");
-    }
-
+    free(ram.bootstrap);
     return 0;
+
 }
