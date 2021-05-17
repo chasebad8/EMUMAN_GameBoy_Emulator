@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "../inc/emuman_logs.h"
 #include "../inc/definitions.h"
@@ -18,7 +19,11 @@ int main()
     cpu.PC = 0;
 
     for(;;) {
-        decode(&cpu.PC, ram.bootstrap[cpu.PC]);
+        if(decode(&cpu.PC, ram.bootstrap[cpu.PC]) == -1)
+        {
+            printf("\nPC: %d", cpu.PC);
+            return(-1);
+        }
 
         if(cpu.PC > 256)
         {
