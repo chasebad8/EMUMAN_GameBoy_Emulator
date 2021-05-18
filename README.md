@@ -36,3 +36,6 @@ http://emulator101.com/
 
 Wasm Debugger <br>
 https://wasmboy.app/
+
+Potential Test <br>
+https://gbdev.gg8.se/files/roms/blargg-gb-tests/
