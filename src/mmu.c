@@ -3,6 +3,9 @@
 #include "../inc/structs.h"
 #include "../inc/emuman_logs.h"
 
+extern struct ram RAM;
+extern struct registers REGISTERS;
+
 /**
  * The MMU of the emulator.  ROM's will be loaded and
  * values will be read from here.

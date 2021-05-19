@@ -3,16 +3,54 @@
 
 #endif //EMUMAN_STRUCTS_H
 
+#include <stdlib.h>
+#include <stdio.h>
 
-struct RAM {
+#define S_FLAG (1 << 7) //Sign
+#define Z_FLAG (1 << 6) //Zero
+#define H_FLAG (1 << 4) //Half Carry
+#define V_FLAG (1 << 2) //Overflow
+#define N_FLAG (1 << 1) //Negative
+#define C_FLAG (1 << 0) //Carry
+
+#define IS_ZERO     (y) (y & Z_FLAG)
+#define IS_NEGATIVE (y) (y & N_FLAG)
+#define IS_SIGNED   (y) (y & S_FLAG)
+#define IS_HCARRY   (y) (y & H_FLAG)
+#define IS_CARRY    (y) (y & C_FLAG)
+#define IS_OVERFLOW (y) (y & V_FLAG)
+
+#define FLAG_SET(x, y) (y |= x)
+#define FLAG_IS_SET(x, y) (y & x)
+#define FLAG_CLEAR(x, y) (y &= ~x)
+
+struct ram {
     u_int8_t *bootstrap;
-};
+} extern RAM;
+
+enum REG_NAMES {
+    A,
+    F,
+    B,
+    C,
+    D,
+    E,
+    H,
+    L,
+    AF,
+    BC,
+    DE,
+    HL,
+    SP,
+    PC,
+    NONE
+} REG_NAMES;
 
 /**
  * registers contain information about all
  * of the current values in the registers
  */
-struct REGISTERS {
+struct registers {
     struct {
         union {
             struct {

@@ -5,32 +5,27 @@
 #include "../inc/definitions.h"
 #include "../inc/structs.h"
 
-struct RAM ram;
-struct REGISTERS cpu;
+struct ram RAM;
+struct registers REGISTERS;
+
 /**
  * This is currently where the EMUMAN is started.
  */
 int main()
 {
-    debug_log("MMU", "Starting System");
-
-    ram.bootstrap = load_rom("/home/cb/Downloads/DMG_ROM.bin");
-
-    cpu.PC = 0;
+    RAM.bootstrap = load_rom("/home/cb/Downloads/DMG_ROM.bin");
+    debug_log("MMU", "Load ROM Complete");
 
     for(;;) {
-        if(decode(&cpu.PC, ram.bootstrap[cpu.PC]) == -1)
-        {
-            printf("\nPC: %d", cpu.PC);
-            return(-1);
-        }
+        step_CPU();
 
-        if(cpu.PC > 256)
+        if(REGISTERS.PC > 256)
         {
             break;
         }
     }
-    free(ram.bootstrap);
+    printf("\nPC: %d", REGISTERS.PC);
+    free(RAM.bootstrap);
     return 0;
 
 }
