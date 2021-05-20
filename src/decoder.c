@@ -375,11 +375,11 @@ void LD_16(u_int16_t *dest, u_int16_t operand) {
  * ----------------------- */
 void ADD_8(u_int8_t *dest, u_int8_t operand)
 {
-    u_int16_t result = *dest + operand;
-    *dest = (u_int8_t)(result & 0xFF);
+    u_int16_t res = *dest + operand;
+    *dest = (u_int8_t)(res & 0xFF);
 
     //Check if a carry has occurred
-    if(result & 0xff00 > 1) {
+    if(res & 0xFF00 > 1) {
         FLAG_SET(C_FLAG, REGISTERS.F);
     } else {
         FLAG_CLEAR(C_FLAG, REGISTERS.F);
@@ -392,7 +392,81 @@ void ADD_8(u_int8_t *dest, u_int8_t operand)
         FLAG_CLEAR(Z_FLAG, REGISTERS.F);
     }
 
-    //Check if a half carry occured
+    //Check if a half carry occurred
+    if(((*dest & 0x0F) + (operand & 0x0F)) > 0x0F) {
+        FLAG_SET(H_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(H_FLAG, REGISTERS.F);
+    }
+
+    //We know that there can't be a negative value (unsigned)
+    FLAG_CLEAR(N_FLAG, REGISTERS.F);
+}
+
+void SUB_8(u_int8_t *dest, u_int8_t operand)
+{
+    //N Flag will always be set
+    FLAG_SET(N_FLAG, REGISTERS.F);
+
+    //If value subtracted from A is larger, we get a carry
+    if(operand > *dest) {
+        FLAG_SET(C_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(C_FLAG, REGISTERS.F);
+    }
+
+    //Check if we need to set Z flag
+    if(*dest - operand == 0) {
+        FLAG_SET(Z_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(Z_FLAG, REGISTERS.F);
+    }
+    *dest = *dest - operand;
+}
+
+void AND_8(u_int8_t *dest, u_int8_t operand)
+{
+    *dest = *dest & operand;
+
+    if(*dest == 0) {
+        FLAG_SET(Z_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(Z_FLAG, REGISTERS.F);
+    }
+    FLAG_CLEAR(N_FLAG, REGISTERS.F);
+    FLAG_CLEAR(C_FLAG, REGISTERS.F);
+    FLAG_SET(H_FLAG, REGISTERS.F);
+}
+
+void OR_8(u_int8_t *dest, u_int8_t operand)
+{
+    *dest = *dest | operand;
+
+    if(*dest == 0) {
+        FLAG_SET(Z_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(Z_FLAG, REGISTERS.F);
+    }
+    FLAG_CLEAR(N_FLAG, REGISTERS.F);
+    FLAG_CLEAR(H_FLAG, REGISTERS.F);
+    FLAG_CLEAR(C_FLAG, REGISTERS.F);
+}
+
+void ADC_8(u_int8_t *dest, u_int8_t operand)
+{
+    if(FLAG_IS_SET(C_FLAG, REGISTERS.F) == 1) {
+        *dest = *dest + 1;
+    }
+    u_int16_t res = *dest + operand;
+
+    //Check if the value of the addition is 0 (shouldn't be)
+    if(*dest == 0){
+        FLAG_SET(Z_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(Z_FLAG, REGISTERS.F);
+    }
+
+    //Check if a half carry occurred
     if(((*dest & 0x0F) + (operand & 0x0F)) > 0x0F) {
         FLAG_SET(H_FLAG, REGISTERS.F);
     } else {
@@ -402,7 +476,38 @@ void ADD_8(u_int8_t *dest, u_int8_t operand)
     //We know that there can't be a negative value (unsigned)
     FLAG_SET(N_FLAG, REGISTERS.F);
 
+    *dest = (u_int8_t)(res & 0xFF);
 }
+
+void SBC_8(u_int8_t *dest, u_int8_t operand)
+{
+    if(FLAG_IS_SET(C_FLAG, REGISTERS.F) == 1) {
+        *dest = *dest + 1;
+    }
+
+    //If value subtracted from A is larger, we get a carry
+    if(operand > *dest) {
+        FLAG_SET(C_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(C_FLAG, REGISTERS.F);
+    }
+
+    if(*dest - operand == 0) {
+        FLAG_SET(Z_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(Z_FLAG, REGISTERS.F);
+    }
+
+    //Check if a half carry occurred
+    if(((*dest & 0x0F) > (operand & 0x0F))) {
+        FLAG_SET(H_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(H_FLAG, REGISTERS.F);
+    }
+
+    *dest = *dest - operand;
+}
+
 /*                         *
  * 16-bit Arithmetic Logic *
  * ------------------------*/
