@@ -40,13 +40,16 @@ int decode(u_int8_t opcode) {
             return 1;
         case 0x03:
             printf("INC, BC\n");
-            break;
+            INC_16(&REGISTERS.BC);
+            return 1;
         case 0x04:
             printf("INC, B\n");
-            break;
+            INC_8(&REGISTERS.B);
+            return 1;
         case 0x05:
             printf("DEC, B\n");
-            break;
+            DEC_8(&REGISTERS.B);
+            return 1;
         case 0x06:
             printf("LD, B, u8\n");
             LD_8(&REGISTERS.B, RAM.bootstrap[REGISTERS.PC + 1]);
@@ -56,13 +59,16 @@ int decode(u_int8_t opcode) {
             break;
         case 0x0B:
             printf("DEC, BC\n");
-            break;
+            DEC_16(&REGISTERS.BC);
+            return 1;
         case 0x0C:
             printf("INC, C\n");
-            break;
+            INC_8(&REGISTERS.C);
+            return 1;
         case 0x0D:
             printf("DEC C\n");
-            break;
+            DEC_8(&REGISTERS.C);
+            return 1;
         case 0x0E:
             printf("LD, C, u8\n");
             break;
@@ -77,10 +83,12 @@ int decode(u_int8_t opcode) {
             break;
         case 0x13:
             printf("INC, DE\n");
-            break;
+            INC_16(&REGISTERS.BC);
+            return 1;
         case 0x15:
             printf("DEC, D\n");
-            break;
+            DEC_8(&REGISTERS.D);
+            return 1;
         case 0x16:
             printf("LD, D, u8\n");
             break;
@@ -98,7 +106,8 @@ int decode(u_int8_t opcode) {
             break;
         case 0x1D:
             printf("DEC, E\n");
-            break;
+            DEC_8(&REGISTERS.E);
+            return 1;
         case 0x1E:
             printf("LD, E, u8\n");
             break;
@@ -116,10 +125,12 @@ int decode(u_int8_t opcode) {
             break;
         case 0x23:
             printf("INC HL\n");
-            break;
+            INC_16(&REGISTERS.HL);
+            return 1;
         case 0x24:
             printf("INC, H\n");
-            break;
+            INC_8(&REGISTERS.H);
+            return 1;
         case 0x26:
             printf("LD, H, u8\n");
             break;
@@ -141,16 +152,20 @@ int decode(u_int8_t opcode) {
             break;
         case 0x33:
             printf("INC, SP\n");
-            break;
+            INC_16(&REGISTERS.SP);
+            return 1;
         case 0x34:
             printf("INC, [HL]\n");
-            break;
+            INC_8(&RAM.bootstrap[REGISTERS.HL]);
+            return 1;
         case 0x3C:
             printf("INC, A\n");
-            break;
+            INC_8(&REGISTERS.A);
+            return 1;
         case 0x3D:
             printf("DEC, A\n");
-            break;
+            DEC_8(&REGISTERS.A);
+            return 1;
         case 0x3E:
             printf("LD, A, u8\n");
             break;
@@ -614,6 +629,16 @@ void DEC_8(u_int8_t *dest)
         FLAG_CLEAR(Z_FLAG, REGISTERS.F);
     }
 
+}
+
+/*                         *
+ * 16-bit Decrement        *
+ * Used to implement DEC ss*
+ * No conditions affected  *
+ * ------------------------*/
+void DEC_16(u_int16_t *dest)
+{
+    *dest = *dest - 1;
 }
 
 /*        *
