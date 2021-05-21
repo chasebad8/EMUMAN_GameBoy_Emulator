@@ -425,7 +425,7 @@ void ADD_8(u_int8_t *dest, u_int8_t operand)
     *dest = (u_int8_t)(res & 0xFF);
 
     //Check if a carry has occurred
-    if(res & 0xFF00 > 1) {
+    if((res & 0xFF00) > 1) {
         FLAG_SET(C_FLAG, REGISTERS.F);
     } else {
         FLAG_CLEAR(C_FLAG, REGISTERS.F);
