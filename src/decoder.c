@@ -32,10 +32,12 @@ int decode(u_int8_t opcode) {
             break;
         case 0x01:
             printf("LD, BC, u16\n");
-            break;
+            LD_16(&REGISTERS.BC, ((RAM.bootstrap[REGISTERS.PC + 1]) | (RAM.bootstrap[REGISTERS.PC + 2] << 8)));
+            return 3;
         case 0x02:
             printf("LD, [BC], A\n");
-            break;
+            LD_8(&RAM.bootstrap[REGISTERS.BC], REGISTERS.A);
+            return 1;
         case 0x03:
             printf("INC, BC\n");
             break;
@@ -47,7 +49,8 @@ int decode(u_int8_t opcode) {
             break;
         case 0x06:
             printf("LD, B, u8\n");
-            break;
+            LD_8(&REGISTERS.B, RAM.bootstrap[REGISTERS.PC + 1]);
+            return 2;
         case 0x08:
             printf("LD, [u16], SP\n");
             break;
