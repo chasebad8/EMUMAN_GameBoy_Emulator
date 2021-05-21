@@ -153,64 +153,80 @@ int decode(u_int8_t opcode) {
             break;
         case 0x40:
             printf("LD, B, B\n");
-            break;
+            LD_8(&REGISTERS.B, REGISTERS.B);
+            return 1;
         case 0x42:
             printf("LD, B, D\n");
-            break;
+            LD_8(&REGISTERS.B, REGISTERS.D);
+            return 1;
         case 0x44:
             printf("LD, B, H\n");
-            break;
+            LD_8(&REGISTERS.B, REGISTERS.H);
+            return 1;
         case 0x47:
             printf("LD, B, A\n");
-            break;
+            LD_8(&REGISTERS.B, REGISTERS.A);
+            return 1;
         case 0x4F:
             printf("LD, C, A\n");
-            break;
+            LD_8(&REGISTERS.C, REGISTERS.A);
+            return 1;
         case 0x50:
             printf("LD, D, B\n");
-            break;
+            LD_8(&REGISTERS.D, REGISTERS.B);
+            return 1;
         case 0x57:
             printf("LD, D, A\n");
-            break;
+            LD_8(&REGISTERS.D, REGISTERS.A);
+            return 1;
         case 0x62:
             printf("LD, H, D\n");
-            break;
+            LD_8(&REGISTERS.H, REGISTERS.D);
+            return 1;
         case 0x63:
             printf("LD, H, E\n");
-            break;
+            LD_8(&REGISTERS.H, REGISTERS.E);
+            return 1;
         case 0x64:
             printf("LD, H, H\n");
-            break;
+            LD_8(&REGISTERS.H, REGISTERS.H);
+            return 1;
         case 0x66:
             printf("LD, H, [HL]\n");
-            break;
+            // u_int8_t offset = (REGISTERS.H<<8) | (REGISTERS.L);
+            LD_8(&REGISTERS.H, RAM.bootstrap[REGISTERS.HL]);
+            return 1;
         case 0x67:
             printf("LD, H, A\n");
-            break;
+            LD_8(&REGISTERS.H, REGISTERS.A);
+            return 1;
         case 0x6E:
             printf("LD, L, [HL]\n");
-            break;
+            LD_8(&REGISTERS.L, RAM.bootstrap[REGISTERS.HL]);
+            return 1;
         case 0x73:
             printf("LD, [HL], E\n");
-            break;
+            LD_8(&RAM.bootstrap[REGISTERS.HL], REGISTERS.E);
+            return 1;
         case 0x77:
             printf("CP, A, u8\n");
             break;
         case 0x78:
             printf("LD, A, B\n");
-            break;
+            LD_8(&REGISTERS.A, REGISTERS.B);
+            return 1;
         case 0x7B:
             printf("LD, A, E\n");
-            break;
+            LD_8(&REGISTERS.A, REGISTERS.E);
+            return 1;
         case 0x7C:
             printf("LD, A, H\n");
-            break;
+            LD_8(&REGISTERS.A, REGISTERS.H);
+            return 1;
         case 0x7D:
             printf("LD, A, L\n");
-            break;
-        case 0x80:
-            printf("ADD, A, B\n");
-            break;
+            LD_8(&REGISTERS.A, REGISTERS.L);
+            return 1;
         case 0x83:
             printf("ADD, A, E\n");
             break;
@@ -333,7 +349,8 @@ int decode(u_int8_t opcode) {
             break;
         case 0xF9:
             printf("LD, SP, HL\n");
-            break;
+            LD_16(&REGISTERS.SP, REGISTERS.HL);
+            return 1;
         case 0xFA:
             printf("LD, A, u16\n");
             break;
