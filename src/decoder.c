@@ -193,7 +193,6 @@ int decode(u_int8_t opcode) {
             return 1;
         case 0x66:
             printf("LD, H, [HL]\n");
-            // u_int8_t offset = (REGISTERS.H<<8) | (REGISTERS.L);
             LD_8(&REGISTERS.H, RAM.bootstrap[REGISTERS.HL]);
             return 1;
         case 0x67:
@@ -233,13 +232,16 @@ int decode(u_int8_t opcode) {
             return 1;
         case 0x83:
             printf("ADD, A, E\n");
-            break;
+            ADD_8(&REGISTERS.A, REGISTERS.E);
+            return 1;
         case 0x86:
             printf("ADD, A, [HL]\n");
-            break;
+            ADD_8(&REGISTERS.A, RAM.bootstrap[REGISTERS.HL]);
+            return 1;
         case 0x87:
             printf("ADD, A, A\n");
-            break;
+            ADD_8(&REGISTERS.A, REGISTERS.A);
+            return 1;
         case 0x88:
             printf("ADC, A, B\n");
             break;
@@ -248,16 +250,20 @@ int decode(u_int8_t opcode) {
             break;
         case 0x90:
             printf("SUB, A, B\n");
-            break;
+            SUB_8(&REGISTERS.A, REGISTERS.B);
+            return 1;
         case 0x91:
             printf("SUB, A, C\n");
-            break;
+            SUB_8(&REGISTERS.A, REGISTERS.C);
+            return 1;
         case 0x95:
             printf("SUB, A, L\n");
-            break;
+            SUB_8(&REGISTERS.A, REGISTERS.L);
+            return 1;
         case 0x96:
             printf("SUB, A, [HL]\n");
-            break;
+            SUB_8(&REGISTERS.A, RAM.bootstrap[REGISTERS.HL]);
+            return 1;
         case 0x99:
             printf("SBC, A, C\n");
             break;
@@ -266,7 +272,8 @@ int decode(u_int8_t opcode) {
             break;
         case 0xA5:
             printf("AND, A, L\n");
-            break;
+            AND_8(&REGISTERS.A, REGISTERS.L);
+            return 1;
         case 0xA8:
             printf("XOR, A, B\n");
             break;
