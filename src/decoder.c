@@ -229,7 +229,8 @@ int decode(u_int8_t opcode) {
             return 1;
         case 0x80:
             printf("ADD, A, B\n");
-            break;
+            ADD_8(&REGISTERS.A, REGISTERS.B);
+            return 1;
         case 0x83:
             printf("ADD, A, E\n");
             break;
