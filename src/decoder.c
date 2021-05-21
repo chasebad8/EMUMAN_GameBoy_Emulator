@@ -547,6 +547,75 @@ void ADD_16(u_int8_t *dest, u_int8_t operand)
     u_int32_t result = *dest + operand;
     *dest = (u_int16_t)(result & 0xFF);
 }
+
+/*                         *
+ * 8-bit Increment         *
+ * ------------------------*/
+void INC_8(u_int8_t *dest)
+{
+    if (*dest == 0x7F){
+        FLAG_SET(V_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(V_FLAG, REGISTERS.F);
+    }
+    if ((((*dest&0x0F) + (1&0x0F)) & 0x10) == 0x10){
+        FLAG_SET(H_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(H_FLAG, REGISTERS.F);
+    }
+
+    *dest = *dest + 1;
+
+    FLAG_CLEAR(Z_FLAG, REGISTERS.F);
+    FLAG_CLEAR(S_FLAG, REGISTERS.F);
+    FLAG_CLEAR(N_FLAG, REGISTERS.F);
+}
+
+/*                         *
+ * 16-bit Increment        *
+ * Used to implement INC ss*
+ * No conditions affected  *
+ * ------------------------*/
+void INC_16(u_int16_t *dest)
+{
+    *dest = *dest + 1;
+}
+
+/*                         *
+ * 8-bit Decrement         *
+ * ------------------------*/
+void DEC_8(u_int8_t *dest)
+{
+    if (*dest == 0x00){
+        FLAG_SET(S_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(S_FLAG, REGISTERS.F);
+    }
+
+    if (*dest == 0x80){
+        FLAG_SET(V_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(V_FLAG, REGISTERS.F);
+    }
+
+    if ((((*dest&0x0F) - (1&0x0F)) & 0x10) == 0x10){
+        FLAG_SET(H_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(H_FLAG, REGISTERS.F);
+    }
+
+    FLAG_SET(N_FLAG, REGISTERS.F);
+
+    *dest = *dest - 1;
+
+    if (*dest == 0x00){
+        FLAG_SET(Z_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(Z_FLAG, REGISTERS.F);
+    }
+
+}
+
 /*        *
  * Branch *
  * -------*/
