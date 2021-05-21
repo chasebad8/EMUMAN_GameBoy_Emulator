@@ -13,3 +13,10 @@ void set_up_registers(void);
 /* OP CODE Functions */
 void LD_8(u_int8_t *dest, u_int8_t operand);
 void LD_16(u_int16_t *dest, u_int16_t operand);
+void ADD_8(u_int8_t *dest, u_int8_t operand);
+void SUB_8(u_int8_t *dest, u_int8_t operand);
+void AND_8(u_int8_t *dest, u_int8_t operand);
+void OR_8(u_int8_t *dest, u_int8_t operand);
+void ADC_8(u_int8_t *dest, u_int8_t operand);
+void SBC_8(u_int8_t *dest, u_int8_t operand);
+void ADD_16(u_int8_t *dest, u_int8_t operand);

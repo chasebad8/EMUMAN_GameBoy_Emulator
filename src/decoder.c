@@ -32,10 +32,12 @@ int decode(u_int8_t opcode) {
             break;
         case 0x01:
             printf("LD, BC, u16\n");
-            break;
+            LD_16(&REGISTERS.BC, ((RAM.bootstrap[REGISTERS.PC + 1]) | (RAM.bootstrap[REGISTERS.PC + 2] << 8)));
+            return 3;
         case 0x02:
             printf("LD, [BC], A\n");
-            break;
+            LD_8(&RAM.bootstrap[REGISTERS.BC], REGISTERS.A);
+            return 1;
         case 0x03:
             printf("INC, BC\n");
             break;
@@ -47,7 +49,8 @@ int decode(u_int8_t opcode) {
             break;
         case 0x06:
             printf("LD, B, u8\n");
-            break;
+            LD_8(&REGISTERS.B, RAM.bootstrap[REGISTERS.PC + 1]);
+            return 2;
         case 0x08:
             printf("LD, [u16], SP\n");
             break;
@@ -153,73 +156,95 @@ int decode(u_int8_t opcode) {
             break;
         case 0x40:
             printf("LD, B, B\n");
-            break;
+            LD_8(&REGISTERS.B, REGISTERS.B);
+            return 1;
         case 0x42:
             printf("LD, B, D\n");
-            break;
+            LD_8(&REGISTERS.B, REGISTERS.D);
+            return 1;
         case 0x44:
             printf("LD, B, H\n");
-            break;
+            LD_8(&REGISTERS.B, REGISTERS.H);
+            return 1;
         case 0x47:
             printf("LD, B, A\n");
-            break;
+            LD_8(&REGISTERS.B, REGISTERS.A);
+            return 1;
         case 0x4F:
             printf("LD, C, A\n");
-            break;
+            LD_8(&REGISTERS.C, REGISTERS.A);
+            return 1;
         case 0x50:
             printf("LD, D, B\n");
-            break;
+            LD_8(&REGISTERS.D, REGISTERS.B);
+            return 1;
         case 0x57:
             printf("LD, D, A\n");
-            break;
+            LD_8(&REGISTERS.D, REGISTERS.A);
+            return 1;
         case 0x62:
             printf("LD, H, D\n");
-            break;
+            LD_8(&REGISTERS.H, REGISTERS.D);
+            return 1;
         case 0x63:
             printf("LD, H, E\n");
-            break;
+            LD_8(&REGISTERS.H, REGISTERS.E);
+            return 1;
         case 0x64:
             printf("LD, H, H\n");
-            break;
+            LD_8(&REGISTERS.H, REGISTERS.H);
+            return 1;
         case 0x66:
             printf("LD, H, [HL]\n");
-            break;
+            LD_8(&REGISTERS.H, RAM.bootstrap[REGISTERS.HL]);
+            return 1;
         case 0x67:
             printf("LD, H, A\n");
-            break;
+            LD_8(&REGISTERS.H, REGISTERS.A);
+            return 1;
         case 0x6E:
             printf("LD, L, [HL]\n");
-            break;
+            LD_8(&REGISTERS.L, RAM.bootstrap[REGISTERS.HL]);
+            return 1;
         case 0x73:
             printf("LD, [HL], E\n");
-            break;
+            LD_8(&RAM.bootstrap[REGISTERS.HL], REGISTERS.E);
+            return 1;
         case 0x77:
             printf("CP, A, u8\n");
             break;
         case 0x78:
             printf("LD, A, B\n");
-            break;
+            LD_8(&REGISTERS.A, REGISTERS.B);
+            return 1;
         case 0x7B:
             printf("LD, A, E\n");
-            break;
+            LD_8(&REGISTERS.A, REGISTERS.E);
+            return 1;
         case 0x7C:
             printf("LD, A, H\n");
-            break;
+            LD_8(&REGISTERS.A, REGISTERS.H);
+            return 1;
         case 0x7D:
             printf("LD, A, L\n");
-            break;
+            LD_8(&REGISTERS.A, REGISTERS.L);
+            return 1;
         case 0x80:
             printf("ADD, A, B\n");
-            break;
+            ADD_8(&REGISTERS.A, REGISTERS.B);
+            return 1;
         case 0x83:
             printf("ADD, A, E\n");
-            break;
+            ADD_8(&REGISTERS.A, REGISTERS.E);
+            return 1;
         case 0x86:
             printf("ADD, A, [HL]\n");
-            break;
+            ADD_8(&REGISTERS.A, RAM.bootstrap[REGISTERS.HL]);
+            return 1;
         case 0x87:
             printf("ADD, A, A\n");
-            break;
+            ADD_8(&REGISTERS.A, REGISTERS.A);
+            return 1;
         case 0x88:
             printf("ADC, A, B\n");
             break;
@@ -228,16 +253,20 @@ int decode(u_int8_t opcode) {
             break;
         case 0x90:
             printf("SUB, A, B\n");
-            break;
+            SUB_8(&REGISTERS.A, REGISTERS.B);
+            return 1;
         case 0x91:
             printf("SUB, A, C\n");
-            break;
+            SUB_8(&REGISTERS.A, REGISTERS.C);
+            return 1;
         case 0x95:
             printf("SUB, A, L\n");
-            break;
+            SUB_8(&REGISTERS.A, REGISTERS.L);
+            return 1;
         case 0x96:
             printf("SUB, A, [HL]\n");
-            break;
+            SUB_8(&REGISTERS.A, RAM.bootstrap[REGISTERS.HL]);
+            return 1;
         case 0x99:
             printf("SBC, A, C\n");
             break;
@@ -246,7 +275,8 @@ int decode(u_int8_t opcode) {
             break;
         case 0xA5:
             printf("AND, A, L\n");
-            break;
+            AND_8(&REGISTERS.A, REGISTERS.L);
+            return 1;
         case 0xA8:
             printf("XOR, A, B\n");
             break;
@@ -333,7 +363,8 @@ int decode(u_int8_t opcode) {
             break;
         case 0xF9:
             printf("LD, SP, HL\n");
-            break;
+            LD_16(&REGISTERS.SP, REGISTERS.HL);
+            return 1;
         case 0xFA:
             printf("LD, A, u16\n");
             break;
@@ -516,6 +547,75 @@ void ADD_16(u_int8_t *dest, u_int8_t operand)
     u_int32_t result = *dest + operand;
     *dest = (u_int16_t)(result & 0xFF);
 }
+
+/*                         *
+ * 8-bit Increment         *
+ * ------------------------*/
+void INC_8(u_int8_t *dest)
+{
+    if (*dest == 0x7F){
+        FLAG_SET(V_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(V_FLAG, REGISTERS.F);
+    }
+    if ((((*dest&0x0F) + (1&0x0F)) & 0x10) == 0x10){
+        FLAG_SET(H_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(H_FLAG, REGISTERS.F);
+    }
+
+    *dest = *dest + 1;
+
+    FLAG_CLEAR(Z_FLAG, REGISTERS.F);
+    FLAG_CLEAR(S_FLAG, REGISTERS.F);
+    FLAG_CLEAR(N_FLAG, REGISTERS.F);
+}
+
+/*                         *
+ * 16-bit Increment        *
+ * Used to implement INC ss*
+ * No conditions affected  *
+ * ------------------------*/
+void INC_16(u_int16_t *dest)
+{
+    *dest = *dest + 1;
+}
+
+/*                         *
+ * 8-bit Decrement         *
+ * ------------------------*/
+void DEC_8(u_int8_t *dest)
+{
+    if (*dest == 0x00){
+        FLAG_SET(S_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(S_FLAG, REGISTERS.F);
+    }
+
+    if (*dest == 0x80){
+        FLAG_SET(V_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(V_FLAG, REGISTERS.F);
+    }
+
+    if ((((*dest&0x0F) - (1&0x0F)) & 0x10) == 0x10){
+        FLAG_SET(H_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(H_FLAG, REGISTERS.F);
+    }
+
+    FLAG_SET(N_FLAG, REGISTERS.F);
+
+    *dest = *dest - 1;
+
+    if (*dest == 0x00){
+        FLAG_SET(Z_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(Z_FLAG, REGISTERS.F);
+    }
+
+}
+
 /*        *
  * Branch *
  * -------*/
