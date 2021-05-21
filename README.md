@@ -3,9 +3,6 @@ EMUMAN is a dumpster fire of an attempt at making an Original GameBoy Emulator.
 It is being created purely for "educational purposes" to gain further insight
 into how different computer chips work.
 
-Chase Badalato <br>
-Carleton University Department of Electrical and Computer Engineering
-
 ## Files
 I wanted to try and break all of the code up into files that are various parts
 of the gameboy.  Therefore we have
