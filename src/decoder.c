@@ -73,7 +73,7 @@ int decode(u_int8_t opcode) {
             return 1;
         case 0x0E:
             printf("LD, C, u8\n");
-            LD_8(REGISTERS.C, RAM.bootstrap[REGISTERS.PC + 1]);
+            LD_8(&REGISTERS.C, RAM.bootstrap[REGISTERS.PC + 1]);
             return 2;
         case 0x0F:
             printf("RRAC\n");
