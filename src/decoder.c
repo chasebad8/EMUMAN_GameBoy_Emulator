@@ -11,6 +11,9 @@
  *  works on it
  */
 
+extern struct ram RAM;
+extern struct registers REGISTERS;
+
 /**
  * @name decode
  * @param pc: The program counter
@@ -18,10 +21,6 @@
  * @return a value based on if it was successful in
  *         decoding the code
  */
-
-extern struct ram RAM;
-extern struct registers REGISTERS;
-
 int decode(u_int8_t opcode) {
     printf("Received opcode %02x\n", opcode);
 
@@ -29,8 +28,7 @@ int decode(u_int8_t opcode) {
     {
         case 0x00:
             printf("NOP\n");
-            NOP();
-            break;
+            return 1;
         case 0x01:
             printf("LD, BC, u16\n");
             LD_16(&REGISTERS.BC, u8_2_u16(RAM.bootstrap[REGISTERS.PC + 1],
@@ -594,11 +592,6 @@ void SBC_8(u_int8_t *dest, u_int8_t operand)
     }
 
     *dest = *dest - operand;
-}
-
-void NOP()
-{
-    REGISTERS.PC = REGISTERS.PC + 1;
 }
 
 /*                         *
