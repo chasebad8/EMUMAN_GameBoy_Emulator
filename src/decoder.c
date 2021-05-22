@@ -366,7 +366,7 @@ int decode(u_int8_t opcode) {
             break;
         case 0xE0:
             printf("LD, [FF00 + u8], A\n");
-            LD_8(&RAM.bootstrap[(0xFF00 + RAM.bootstrap[PC + 1])], REGISTERS.A);
+            LD_8(&RAM.bootstrap[(0xFF00 + RAM.bootstrap[REGISTERS.PC + 1])], REGISTERS.A);
             return 2;
         case 0xE2:
             printf("LD, [FF00 +C], A\n");
@@ -543,6 +543,7 @@ void XOR_8(u_int8_t *dest, u_int8_t operand)
     FLAG_CLEAR(C_FLAG, REGISTERS.F);
 }
 
+// looks like we both made a CP_8
 void CP_8(u_int8_t *dest, u_int8_t operand)
 {
     if(*dest - operand == 0) {
