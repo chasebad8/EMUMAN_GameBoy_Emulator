@@ -25,3 +25,4 @@ void INC_16(u_int16_t *dest);
 void DEC_8(u_int8_t *dest);
 void DEC_16(u_int16_t *dest);
 void CP_8(u_int8_t *operand);
+void NOP();

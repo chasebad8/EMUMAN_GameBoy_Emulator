@@ -20,31 +20,16 @@
 #define IS_CARRY    (y) (y & C_FLAG)
 #define IS_OVERFLOW (y) (y & V_FLAG)
 
-#define FLAG_SET(x, y) (y |= x)
+#define FLAG_SET(x, y)    (y |= x)
 #define FLAG_IS_SET(x, y) (y & x)
-#define FLAG_CLEAR(x, y) (y &= ~x)
+#define FLAG_CLEAR(x, y)  (y &= ~x)
+
+#define u8_2_u16(x, y) (x | (y << 8))
 
 struct ram {
     u_int8_t *bootstrap;
-} extern RAM;
-
-enum REG_NAMES {
-    A,
-    F,
-    B,
-    C,
-    D,
-    E,
-    H,
-    L,
-    AF,
-    BC,
-    DE,
-    HL,
-    SP,
-    PC,
-    NONE
-} REG_NAMES;
+    u_int8_t *SRAM; //stack ram
+};
 
 /**
  * registers contain information about all

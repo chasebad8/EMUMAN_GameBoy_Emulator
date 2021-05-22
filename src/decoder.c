@@ -11,6 +11,9 @@
  *  works on it
  */
 
+extern struct ram RAM;
+extern struct registers REGISTERS;
+
 /**
  * @name decode
  * @param pc: The program counter
@@ -18,10 +21,6 @@
  * @return a value based on if it was successful in
  *         decoding the code
  */
-
-extern struct ram RAM;
-extern struct registers REGISTERS;
-
 int decode(u_int8_t opcode) {
     printf("Received opcode %02x\n", opcode);
 
@@ -29,10 +28,11 @@ int decode(u_int8_t opcode) {
     {
         case 0x00:
             printf("NOP\n");
-            break;
+            return 1;
         case 0x01:
             printf("LD, BC, u16\n");
-            LD_16(&REGISTERS.BC, ((RAM.bootstrap[REGISTERS.PC + 1]) | (RAM.bootstrap[REGISTERS.PC + 2] << 8)));
+            LD_16(&REGISTERS.BC, u8_2_u16(RAM.bootstrap[REGISTERS.PC + 1],
+                                                  RAM.bootstrap[REGISTERS.PC + 2]));
             return 3;
         case 0x02:
             printf("LD, [BC], A\n");
@@ -436,12 +436,14 @@ int decode(u_int8_t opcode) {
 /*                           *
  * 8-bit Load / Store / Move *
  * ------------------------- */
+
 void LD_8(u_int8_t *dest, u_int8_t operand) {
     *dest = operand;
 }
 /*                            *
  * 16-bit Load / Store / Move *
  * -------------------------- */
+
 void LD_16(u_int16_t *dest, u_int16_t operand) {
     *dest = operand;
 }
@@ -525,6 +527,43 @@ void OR_8(u_int8_t *dest, u_int8_t operand)
     FLAG_CLEAR(N_FLAG, REGISTERS.F);
     FLAG_CLEAR(H_FLAG, REGISTERS.F);
     FLAG_CLEAR(C_FLAG, REGISTERS.F);
+}
+
+void XOR_8(u_int8_t *dest, u_int8_t operand)
+{
+    *dest = *dest ^ operand;
+
+    if(*dest == 0) {
+        FLAG_SET(Z_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(Z_FLAG, REGISTERS.F);
+    }
+    FLAG_CLEAR(N_FLAG, REGISTERS.F);
+    FLAG_CLEAR(H_FLAG, REGISTERS.F);
+    FLAG_CLEAR(C_FLAG, REGISTERS.F);
+}
+
+void CP_8(u_int8_t *dest, u_int8_t operand)
+{
+    if(*dest - operand == 0) {
+        FLAG_SET(Z_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(Z_FLAG, REGISTERS.F);
+    }
+
+    if(*dest < operand) {
+        FLAG_SET(C_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(C_FLAG, REGISTERS.F);
+    }
+
+    if((*dest & 0x0F) < (operand & 0x0F)) {
+        FLAG_SET(H_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(H_FLAG, REGISTERS.F);
+    }
+
+    FLAG_SET(N_FLAG, REGISTERS.F);
 }
 
 void ADC_8(u_int8_t *dest, u_int8_t operand)
@@ -707,6 +746,19 @@ void CP_8(u_int8_t *operand)
  * Branch *
  * -------*/
 
+
 /*        *
- * Other *
+ * Stack  *
  * -------*/
+
+void PUSH_16(u_int16_t operand)
+{
+    REGISTERS.SP += 2;
+    //add code to push operand to ram here
+}
+
+void POP_16(u_int16_t operand)
+{
+    REGISTERS.SP -= 2;
+    //add code to remove operand here
+}
