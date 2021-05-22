@@ -29,6 +29,9 @@
 struct ram {
     u_int8_t *bootstrap;
     u_int8_t *SRAM; //stack ram
+    u_int8_t *IO;
+    u_int8_t *VRAM;
+    u_int8_t *cartridge
 };
 
 /**
