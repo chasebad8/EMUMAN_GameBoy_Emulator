@@ -54,8 +54,8 @@ int decode(u_int8_t opcode) {
             return 2;
         case 0x08:
             printf("LD, [u16], SP\n");
-            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            LD_16(read_16(u8_2_u16(REGISTERS.PC + 1, REGISTERS.PC + 2)), REGISTERS.SP);
+            return 3;
         case 0x0B:
             printf("DEC, BC\n");
             DEC_16(&REGISTERS.BC);
@@ -134,8 +134,9 @@ int decode(u_int8_t opcode) {
             return 3;
         case 0x22:
             printf("LD, [HL+], A\n");
-            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            REGISTERS.HL = REGISTERS.HL + 1;
+            LD_16(read_16(REGISTERS.HL), REGISTERS.A);
+            return 1;
         case 0x23:
             printf("INC HL\n");
             INC_16(&REGISTERS.HL);
@@ -166,8 +167,9 @@ int decode(u_int8_t opcode) {
             return 3;
         case 0x32:
             printf("LD, HL-, A\n");
-            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            LD_16(&REGISTERS.HL, REGISTERS.A);
+            REGISTERS.HL = REGISTERS.HL - 1;
+            return 1;
         case 0x33:
             printf("INC, SP\n");
             INC_16(&REGISTERS.SP);
@@ -318,11 +320,11 @@ int decode(u_int8_t opcode) {
             return 1;
         case 0xA8:
             printf("XOR, A, B\n");
-            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            XOR_8(&REGISTERS.A, REGISTERS.B);
+            return 1;
         case 0xAF:
             printf("XOR, A, A\n");
-            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
+            XOR_8(&REGISTERS.A, REGISTERS.A);
             break;
         case 0xB9:
             printf("CP, A, C\n");
@@ -395,9 +397,9 @@ int decode(u_int8_t opcode) {
             AND_8(&REGISTERS.A, read_8(REGISTERS.PC + 1));
             return 2;
         case 0xEA:
-            printf("LD, u16, A\n");
-            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            printf("LD, [u16], A\n");
+            LD_16(read_16(u8_2_u16(REGISTERS.PC + 1, REGISTERS.PC + 2)), REGISTERS.A);
+            return 3;
         case 0xEC:
             error_log("CPU", "UNDEFINED code was accessed (0xEC)");
             break;
