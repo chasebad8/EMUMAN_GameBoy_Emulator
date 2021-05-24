@@ -6,6 +6,7 @@
 #include "../inc/structs.h"
 
 struct ram RAM;
+struct gpu GPU;
 struct registers REGISTERS;
 
 /**
@@ -14,6 +15,14 @@ struct registers REGISTERS;
 int main()
 {
     RAM.bootstrap = load_rom("/home/cb/Downloads/DMG_ROM.bin");
+  //RAM.ROM       = load_rom(); // load the game
+    RAM.WRAM      = calloc(0, sizeof(u_int8_t) * 0x3DFF);
+    RAM.ERAM      = calloc(0, sizeof(u_int8_t) * 0x1FFF);
+    RAM.ZRAM      = calloc(0, sizeof(u_int8_t) * 0x007F);
+
+    GPU.OAM       = calloc(0, sizeof(u_int8_t)); //Needs work
+    GPU.VRAM      = calloc(0, sizeof(u_int8_t)); //Needs work
+
     debug_log("MMU", "Load ROM Complete");
 
     for(;;) {

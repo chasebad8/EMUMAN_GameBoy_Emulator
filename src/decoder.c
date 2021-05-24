@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdint.h>
 #include "../inc/emuman_logs.h"
 #include "../inc/structs.h"
 #include "../inc/definitions.h"
@@ -55,6 +54,7 @@ int decode(u_int8_t opcode) {
             return 2;
         case 0x08:
             printf("LD, [u16], SP\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0x0B:
             printf("DEC, BC\n");
@@ -74,9 +74,11 @@ int decode(u_int8_t opcode) {
             return 2;
         case 0x0F:
             printf("RRAC\n");
-            break;
+            RRCA();
+            return 1;
         case 0x10:
             printf("STOP\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0x11:
             printf("LD, DE, u16\n");
@@ -96,13 +98,15 @@ int decode(u_int8_t opcode) {
             return 2;
         case 0x17:
             printf("RLA\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0x18:
             printf("JR, i8\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0x19:
             printf("ADD, HL, DE\n");
-            ADD_16(REGISTERS.HL, REGISTERS.DE);
+            ADD_16(&REGISTERS.HL, REGISTERS.DE);
             return 1;
         case 0x1A:
             printf("LD, A, [DE]\n");
@@ -118,6 +122,7 @@ int decode(u_int8_t opcode) {
             return 2;
         case 0x1F:
             printf("RRA\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0x20:
             printf("LD, SP, u16\n");
@@ -129,6 +134,7 @@ int decode(u_int8_t opcode) {
             return 3;
         case 0x22:
             printf("LD, [HL+], A\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0x23:
             printf("INC HL\n");
@@ -144,6 +150,7 @@ int decode(u_int8_t opcode) {
             return 2;
         case 0x28:
             printf("JR Z, i8\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0x2E:
             printf("LD, L, u8\n");
@@ -151,13 +158,15 @@ int decode(u_int8_t opcode) {
             return 2;
         case 0x2F:
             printf("CPL\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0x31:
             printf("LD, SP, u16\n");
             LD_16(&REGISTERS.SP, read_8(REGISTERS.PC + 1));
-            break;
+            return 3;
         case 0x32:
             printf("LD, HL-, A\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0x33:
             printf("INC, SP\n");
@@ -309,9 +318,11 @@ int decode(u_int8_t opcode) {
             return 1;
         case 0xA8:
             printf("XOR, A, B\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0xAF:
             printf("XOR, A, A\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0xB9:
             printf("CP, A, C\n");
@@ -327,21 +338,26 @@ int decode(u_int8_t opcode) {
             return 1;
         case 0xC1:
             printf("POP, BC\n");
-            break;
+            POP_16(&REGISTERS.BC);
+            return 1;
         case 0xC5:
             printf("PUSH, BC\n");
-            break;
+            PUSH_16(REGISTERS.BC);
+            return 1;
         case 0xC9:
             printf("RET\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0xCB:
             printf("NEXT OP IS FROM OTHER TABLE!\n");
             break;
         case 0xCC:
             printf("CALL, Z, u16\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0xCD:
             printf("CALL u16\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0xCE:
             printf("ADC, A, u8\n");
@@ -349,15 +365,19 @@ int decode(u_int8_t opcode) {
             return 2;
         case 0xD2:
             printf("JP, NC, u16\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0xD8:
             printf("RET C\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0xD9:
             printf("RETI C\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0xDC:
             printf("CALL, C, u16\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0xDD:
             error_log("CPU", "UNDEFINED code was accessed (0xDD)");
@@ -376,6 +396,7 @@ int decode(u_int8_t opcode) {
             return 2;
         case 0xEA:
             printf("LD, u16, A\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0xEC:
             error_log("CPU", "UNDEFINED code was accessed (0xEC)");
@@ -393,12 +414,15 @@ int decode(u_int8_t opcode) {
             return 2;
         case 0xF3:
             printf("DI\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0xF5:
             printf("PUSH, AF\n");
-            break;
+            PUSH_16(REGISTERS.AF);
+            return 1;
         case 0xF7:
             printf("RST, 30h\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0xF9:
             printf("LD, SP, HL\n");
@@ -410,6 +434,7 @@ int decode(u_int8_t opcode) {
             return 3;
         case 0xFB:
             printf("EI\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         case 0xFC:
             printf("UNDEFINED\n");
@@ -421,6 +446,7 @@ int decode(u_int8_t opcode) {
             return 2;
         case 0xFF:
             printf("RST 0x38\n");
+            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             break;
         default:
             error_log("CPU", "OP CODE not implemented!");
@@ -638,7 +664,7 @@ void CPL_8()
 /*                         *
  * 16-bit Arithmetic Logic *
  * ------------------------*/
-void ADD_16(u_int8_t *dest, u_int8_t operand)
+void ADD_16(u_int16_t *dest, u_int16_t operand)
 {
     u_int32_t result = *dest + operand;
     *dest = (u_int16_t)(result & 0xFF);
@@ -726,7 +752,10 @@ void DEC_16(u_int16_t *dest)
 /*        *
  * Branch *
  * -------*/
-
+void STOP()
+{
+    //exit
+}
 
 /*        *
  * Stack  *
@@ -734,12 +763,43 @@ void DEC_16(u_int16_t *dest)
 
 void PUSH_16(u_int16_t operand)
 {
-    REGISTERS.SP += 2;
-    //add code to push operand to ram here
+    REGISTERS.SP -= 2;
+    write_u16(REGISTERS.SP, operand);
 }
 
-void POP_16(u_int16_t operand)
+void POP_16(u_int16_t *dest)
 {
-    REGISTERS.SP -= 2;
-    //add code to remove operand here
+    *dest = read_16(REGISTERS.SP);
+    REGISTERS.SP += 2;
+}
+
+/*        *
+ * Other  *
+ * -------*/
+
+/**
+ * @name RRCA
+ *
+ * The contents of the Accumulator (Register A)
+ * are rotated right 1 bit position. Bit 0 is copied
+ * to the Carry flag and also to bit 7.
+ * Bit 0 is the least-significant bit.
+ *
+ */
+void RRCA(void)
+{
+    if((REGISTERS.A & 0x01) == 1) {
+        FLAG_SET(C_FLAG, REGISTERS.F);
+    }  else {
+        FLAG_CLEAR(C_FLAG, REGISTERS.F);
+    }
+
+    REGISTERS.A >> 1;
+    if((REGISTERS.A & 0x01 ) == 1) {
+        REGISTERS.A = REGISTERS.A | 0x80; //1000 0000
+    }
+
+    FLAG_CLEAR(N_FLAG, REGISTERS.F);
+    FLAG_CLEAR(Z_FLAG, REGISTERS.F);
+    FLAG_CLEAR(H_FLAG, REGISTERS.F);
 }

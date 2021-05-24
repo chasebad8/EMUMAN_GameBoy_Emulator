@@ -4,6 +4,7 @@
 #include "../inc/emuman_logs.h"
 
 extern struct ram RAM;
+extern struct gpu GPU;
 extern struct registers REGISTERS;
 
 /**
@@ -33,9 +34,7 @@ void * load_rom(const char* filename)
         rom_pointer ++;
     }
 
-
     fclose(f);
-
     return tmp;
 }
 
@@ -71,4 +70,36 @@ u_int8_t read_8(u_int16_t address)
 u_int16_t read_16(u_int16_t address)
 {
     return u8_2_u16(read_8(address), read_8(address + 1));
+}
+
+/**
+ * @name write_8
+ *
+ * Write a 8 bit value into an address
+ * located in RAM
+ *
+ * @param address
+ * @param value
+ */
+void write_8(u_int16_t address, u_int8_t value)
+{
+    if(address < 0x0100 && address > 0x0000)
+    {
+        RAM.bootstrap[address] = value;
+    }
+}
+
+/**
+ * @name write_16
+ *
+ * Write a 16 bit value into an address
+ * located in RAM
+ *
+ * @param address
+ * @param value
+ */
+void write_u16(u_int16_t address, u_int16_t value)
+{
+    write_8(address, value & 0x00FF);
+    write_8(address + 1, value & 0xFF00);
 }

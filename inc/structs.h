@@ -13,25 +13,32 @@
 #define N_FLAG (1 << 1) //Negative
 #define C_FLAG (1 << 0) //Carry
 
-#define IS_ZERO     (y) (y & Z_FLAG)
-#define IS_NEGATIVE (y) (y & N_FLAG)
-#define IS_SIGNED   (y) (y & S_FLAG)
-#define IS_HCARRY   (y) (y & H_FLAG)
-#define IS_CARRY    (y) (y & C_FLAG)
-#define IS_OVERFLOW (y) (y & V_FLAG)
-
 #define FLAG_SET(x, y)    (y |= x)
 #define FLAG_IS_SET(x, y) (y & x)
 #define FLAG_CLEAR(x, y)  (y &= ~x)
 
 #define u8_2_u16(x, y) (x | (y << 8))
 
-struct ram {
-    u_int8_t *bootstrap;
-    u_int8_t *SRAM; //stack ram
-    u_int8_t *IO;
-    u_int8_t *VRAM;
-    u_int8_t *cartridge
+struct ram
+{
+    //0000 - 3FFF Cartridge ROM
+    u_int8_t *bootstrap; //0000 - 00FF BIOS (Gets overridden)
+    u_int8_t *ROM;
+
+    //A000 - BFFF External Cartridge RAM
+    u_int8_t *ERAM;
+
+    //C000 - DFFF Working RAM
+    u_int8_t *WRAM;
+
+    //FF80 - FFFF Zero Page RAM
+    u_int8_t *ZRAM;
+};
+
+struct gpu
+{
+    u_int8_t *VRAM; //Virtual RAM
+    u_int8_t *OAM;  //Object Attribute Memory
 };
 
 /**
