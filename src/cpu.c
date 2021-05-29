@@ -14,7 +14,7 @@ void set_up_registers(void) {
     REGISTERS.PC = 0;
 }
 void step_CPU(void) {
-    REGISTERS.PC += decode(RAM.bootstrap[REGISTERS.PC]);
+    REGISTERS.PC += decode(read_8(REGISTERS.PC));
 }
 
 

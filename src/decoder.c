@@ -34,7 +34,7 @@ int decode(u_int8_t opcode) {
             return 3;
         case 0x02:
             printf("LD, [BC], A\n");
-            LD_8(&RAM.bootstrap[REGISTERS.BC], REGISTERS.A);
+            LD_8_RAM(REGISTERS.BC, REGISTERS.A);
             return 1;
         case 0x03:
             printf("INC, BC\n");
@@ -54,7 +54,7 @@ int decode(u_int8_t opcode) {
             return 2;
         case 0x08:
             printf("LD, [u16], SP\n");
-            LD_16(read_16(u8_2_u16(REGISTERS.PC + 1, REGISTERS.PC + 2)), REGISTERS.SP);
+            LD_16_RAM(read_16(u8_2_u16(REGISTERS.PC + 1, REGISTERS.PC + 2)), REGISTERS.SP);
             return 3;
         case 0x0B:
             printf("DEC, BC\n");
@@ -79,7 +79,7 @@ int decode(u_int8_t opcode) {
         case 0x10:
             printf("STOP\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            return 1;
         case 0x11:
             printf("LD, DE, u16\n");
             LD_16(&REGISTERS.DE, read_16(REGISTERS.PC + 1));
@@ -99,11 +99,11 @@ int decode(u_int8_t opcode) {
         case 0x17:
             printf("RLA\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            exit(-1);
         case 0x18:
             printf("JR, i8\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            exit(-1);
         case 0x19:
             printf("ADD, HL, DE\n");
             ADD_16(&REGISTERS.HL, REGISTERS.DE);
@@ -123,7 +123,7 @@ int decode(u_int8_t opcode) {
         case 0x1F:
             printf("RRA\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            exit(-1);
         case 0x20:
             printf("LD, SP, u16\n");
             LD_16(&REGISTERS.SP, read_16(REGISTERS.PC + 1));
@@ -135,7 +135,7 @@ int decode(u_int8_t opcode) {
         case 0x22:
             printf("LD, [HL+], A\n");
             REGISTERS.HL = REGISTERS.HL + 1;
-            LD_16(read_16(REGISTERS.HL), REGISTERS.A);
+            LD_16_RAM(REGISTERS.HL, REGISTERS.A);
             return 1;
         case 0x23:
             printf("INC HL\n");
@@ -152,7 +152,7 @@ int decode(u_int8_t opcode) {
         case 0x28:
             printf("JR Z, i8\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            exit(-1);
         case 0x2E:
             printf("LD, L, u8\n");
             LD_8(&REGISTERS.L, read_8(REGISTERS.PC + 1));
@@ -160,7 +160,7 @@ int decode(u_int8_t opcode) {
         case 0x2F:
             printf("CPL\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            exit(-1);
         case 0x31:
             printf("LD, SP, u16\n");
             LD_16(&REGISTERS.SP, read_8(REGISTERS.PC + 1));
@@ -176,7 +176,7 @@ int decode(u_int8_t opcode) {
             return 1;
         case 0x34:
             printf("INC, [HL]\n");
-            INC_8(&RAM.bootstrap[REGISTERS.HL]);
+            write_u16(REGISTERS.HL, read_8(REGISTERS.HL) + 1);
             return 1;
         case 0x3C:
             printf("INC, A\n");
@@ -325,7 +325,7 @@ int decode(u_int8_t opcode) {
         case 0xAF:
             printf("XOR, A, A\n");
             XOR_8(&REGISTERS.A, REGISTERS.A);
-            break;
+            return 1;
         case 0xB9:
             printf("CP, A, C\n");
             CP_8(&REGISTERS.C);
@@ -349,18 +349,18 @@ int decode(u_int8_t opcode) {
         case 0xC9:
             printf("RET\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            exit(-1);
         case 0xCB:
             printf("NEXT OP IS FROM OTHER TABLE!\n");
-            break;
+            return (CB_decode(read_8(REGISTERS.PC + 1)) + 1);
         case 0xCC:
             printf("CALL, Z, u16\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            exit(-1);
         case 0xCD:
             printf("CALL u16\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            exit(-1);
         case 0xCE:
             printf("ADC, A, u8\n");
             ADC_8(&REGISTERS.A, read_8(REGISTERS.PC));
@@ -368,22 +368,22 @@ int decode(u_int8_t opcode) {
         case 0xD2:
             printf("JP, NC, u16\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            exit(-1);
         case 0xD8:
             printf("RET C\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            exit(-1);
         case 0xD9:
             printf("RETI C\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            exit(-1);
         case 0xDC:
             printf("CALL, C, u16\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            exit(-1);
         case 0xDD:
             error_log("CPU", "UNDEFINED code was accessed (0xDD)");
-            break;
+            exit(-1);
         case 0xE0:
             printf("LD, [FF00 + u8], A\n");
             LD_8(&RAM.bootstrap[(0xFF00 + read_8(REGISTERS.PC + 1))], REGISTERS.A);
@@ -391,21 +391,21 @@ int decode(u_int8_t opcode) {
         case 0xE2:
             printf("LD, [FF00 + C], A\n");
             LD_8(&RAM.bootstrap[(0xFF00 + REGISTERS.C)], REGISTERS.A);
-            return 2;
+            return 1;
         case 0xE6:
             printf("AND, A, u8\n");
             AND_8(&REGISTERS.A, read_8(REGISTERS.PC + 1));
             return 2;
         case 0xEA:
             printf("LD, [u16], A\n");
-            LD_16(read_16(u8_2_u16(REGISTERS.PC + 1, REGISTERS.PC + 2)), REGISTERS.A);
+            LD_16_RAM(read_16(u8_2_u16(REGISTERS.PC + 1, REGISTERS.PC + 2)), REGISTERS.A);
             return 3;
         case 0xEC:
             error_log("CPU", "UNDEFINED code was accessed (0xEC)");
-            break;
+            exit(-1);
         case 0xED:
             error_log("CPU", "UNDEFINED code was accessed (0xED)");
-            break;
+            exit(-1);
         case 0xF0:
             printf("LD, A, (FF00+u8)\n");
             LD_8(&REGISTERS.A, (0xFF00 + read_8(REGISTERS.PC + 1)));
@@ -417,7 +417,7 @@ int decode(u_int8_t opcode) {
         case 0xF3:
             printf("DI\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            exit(-1);
         case 0xF5:
             printf("PUSH, AF\n");
             PUSH_16(REGISTERS.AF);
@@ -425,7 +425,7 @@ int decode(u_int8_t opcode) {
         case 0xF7:
             printf("RST, 30h\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            exit(-1);
         case 0xF9:
             printf("LD, SP, HL\n");
             LD_16(&REGISTERS.SP, REGISTERS.HL);
@@ -437,11 +437,11 @@ int decode(u_int8_t opcode) {
         case 0xFB:
             printf("EI\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            exit(-1);
         case 0xFC:
             printf("UNDEFINED\n");
             error_log("CPU", "UNDEFINED code was accessed (0xFC)");
-            break;
+            exit(-1);
         case 0xFE:
             printf("CP, A, u8\n");
             CP_8(&RAM.bootstrap[REGISTERS.PC + 1]);
@@ -449,11 +449,11 @@ int decode(u_int8_t opcode) {
         case 0xFF:
             printf("RST 0x38\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            break;
+            exit(-1);
         default:
             error_log("CPU", "OP CODE not implemented!");
             printf("Op Code Not Implemented!\n");
-            return -1;
+            exit(-1);
 
     }
 }
@@ -471,6 +471,16 @@ void LD_8(u_int8_t *dest, u_int8_t operand) {
 
 void LD_16(u_int16_t *dest, u_int16_t operand) {
     *dest = operand;
+}
+
+void LD_8_RAM(u_int16_t dest, u_int8_t operand)
+{
+    write_8(dest, operand);
+}
+
+void LD_16_RAM(u_int16_t dest, u_int16_t operand)
+{
+    write_u16(dest, operand);
 }
 /*                         *
  * 8-bit Arithmetic Logic  *
@@ -804,4 +814,30 @@ void RRCA(void)
     FLAG_CLEAR(N_FLAG, REGISTERS.F);
     FLAG_CLEAR(Z_FLAG, REGISTERS.F);
     FLAG_CLEAR(H_FLAG, REGISTERS.F);
+}
+
+int CB_decode(u_int8_t opcode)
+{
+    switch(opcode)
+    {
+        case(0x7C):
+            printf("BIT, H, 1 << 7\n");
+            BIT_8(&REGISTERS.H, 1 << 7);
+            return 1;
+    }
+}
+
+/*
+ * CB commands :(
+ */
+void BIT_8(u_int8_t *dest, u_int8_t bit)
+{
+    if(*dest & bit == 0){
+        FLAG_SET(Z_FLAG, REGISTERS.F);
+    } else {
+        FLAG_CLEAR(Z_FLAG, REGISTERS.F);
+    }
+
+    FLAG_CLEAR(N_FLAG, REGISTERS.F);
+    FLAG_SET(H_FLAG, REGISTERS.F);
 }

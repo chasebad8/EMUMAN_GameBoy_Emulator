@@ -101,5 +101,5 @@ void write_8(u_int16_t address, u_int8_t value)
 void write_u16(u_int16_t address, u_int16_t value)
 {
     write_8(address, value & 0x00FF);
-    write_8(address + 1, value & 0xFF00);
+    write_8(address + 1, (value & 0xFF00) >> 8);
 }

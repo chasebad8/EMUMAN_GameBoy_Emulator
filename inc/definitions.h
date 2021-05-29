@@ -11,6 +11,8 @@ void step_CPU(void);
 void set_up_registers(void);
 
 /* OP CODE Functions */
+void LD_8_RAM(u_int16_t dest, u_int8_t operand);
+void LD_16_RAM(u_int16_t dest, u_int16_t operand);
 void LD_8(u_int8_t *dest, u_int8_t operand);
 void LD_16(u_int16_t *dest, u_int16_t operand);
 void ADD_8(u_int8_t *dest, u_int8_t operand);
@@ -30,6 +32,9 @@ void NOP();
 void RRCA(void);
 void PUSH_16(u_int16_t operand);
 void POP_16(u_int16_t *dest);
+
+int CB_decode(u_int8_t opcode);
+void BIT_8(u_int8_t *dest, u_int8_t bit);
 
 /* Memory Functions */
 u_int8_t read_8(u_int16_t address);
