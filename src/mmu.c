@@ -56,6 +56,10 @@ u_int8_t read_8(u_int16_t address)
     {
         return RAM.bootstrap[address];
     }
+    else if(address < 0x4000)
+    {
+        return RAM.ROM[address];
+    }
     //of course will need to add more
 }
 
@@ -86,6 +90,10 @@ void write_8(u_int16_t address, u_int8_t value)
     if(address < 0x0100 && address > 0x0000)
     {
         RAM.bootstrap[address] = value;
+    }
+    else if(address < 0x4000)
+    {
+        RAM.ROM[address] = value;
     }
 }
 

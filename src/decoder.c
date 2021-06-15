@@ -247,9 +247,9 @@ int decode(u_int8_t opcode) {
             LD_8(&RAM.bootstrap[REGISTERS.HL], REGISTERS.E);
             return 1;
         case 0x77:
-            printf("CP, A, u8\n");
-            CP_8(&RAM.bootstrap[REGISTERS.PC + 1]);
-            return 2;
+            printf("LD [HL], A\n");
+            LD_8_RAM(read_16(REGISTERS.HL), REGISTERS.A);
+            return 1;
         case 0x78:
             printf("LD, A, B\n");
             LD_8(&REGISTERS.A, REGISTERS.B);
@@ -352,15 +352,15 @@ int decode(u_int8_t opcode) {
             exit(-1);
         case 0xCB:
             printf("NEXT OP IS FROM OTHER TABLE!\n");
-            return (CB_decode(read_8(REGISTERS.PC + 1)) + 1);
+            return (CB_decode(read_8(REGISTERS.PC + 1)));
         case 0xCC:
             printf("CALL, Z, u16\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             exit(-1);
         case 0xCD:
             printf("CALL u16\n");
-            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            exit(-1);
+            PUSH_16(read_16(REGISTERS.PC + 1));
+            return 3;
         case 0xCE:
             printf("ADC, A, u8\n");
             ADC_8(&REGISTERS.A, read_8(REGISTERS.PC));
@@ -371,8 +371,8 @@ int decode(u_int8_t opcode) {
             exit(-1);
         case 0xD8:
             printf("RET C\n");
-            error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
-            exit(-1);
+            RET_C();
+            return 1;
         case 0xD9:
             printf("RETI C\n");
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
@@ -682,6 +682,13 @@ void ADD_16(u_int16_t *dest, u_int16_t operand)
     *dest = (u_int16_t)(result & 0xFF);
 }
 
+void RET_C(void)
+{
+    if(FLAG_IS_SET(C_FLAG, REGISTERS.F))
+    {
+        POP_16(&REGISTERS.PC);
+    }
+}
 /*                         *
  * 8-bit Increment         *
  * ------------------------*/

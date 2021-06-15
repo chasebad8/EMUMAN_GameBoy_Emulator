@@ -32,6 +32,7 @@ void NOP();
 void RRCA(void);
 void PUSH_16(u_int16_t operand);
 void POP_16(u_int16_t *dest);
+void RET_C(void);
 
 int CB_decode(u_int8_t opcode);
 void BIT_8(u_int8_t *dest, u_int8_t bit);

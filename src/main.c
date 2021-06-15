@@ -14,8 +14,9 @@ struct registers REGISTERS;
  */
 int main()
 {
+    //RAM.bootstrap = load_rom("/home/cb/Downloads/DMG_ROM.bin");
     RAM.bootstrap = load_rom("/home/cb/Downloads/DMG_ROM.bin");
-  //RAM.ROM       = load_rom(); // load the game
+    RAM.ROM       = load_rom("/home/cb/Downloads/Tetris.gb");
     RAM.WRAM      = calloc(0, sizeof(u_int8_t) * 0x3DFF);
     RAM.ERAM      = calloc(0, sizeof(u_int8_t) * 0x1FFF);
     RAM.ZRAM      = calloc(0, sizeof(u_int8_t) * 0x007F);
@@ -25,10 +26,13 @@ int main()
 
     debug_log("MMU", "Load ROM Complete");
 
+    set_up_registers();
+    REGISTERS.PC = 0x00;
+
     for(;;) {
         step_CPU();
 
-        if(REGISTERS.PC > 256)
+        if(REGISTERS.PC > 0xFFFF)
         {
             break;
         }
