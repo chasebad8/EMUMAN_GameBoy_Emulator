@@ -14,7 +14,6 @@ struct registers REGISTERS;
  */
 int main()
 {
-    //RAM.bootstrap = load_rom("/home/cb/Downloads/DMG_ROM.bin");
     RAM.bootstrap = load_rom("/home/cb/Downloads/DMG_ROM.bin");
     RAM.ROM       = load_rom("/home/cb/Downloads/Tetris.gb");
     RAM.WRAM      = calloc(0, sizeof(u_int8_t) * 0x3DFF);
@@ -24,10 +23,10 @@ int main()
     GPU.OAM       = calloc(0, sizeof(u_int8_t)); //Needs work
     GPU.VRAM      = calloc(0, sizeof(u_int8_t)); //Needs work
 
-    debug_log("MMU", "Load ROM Complete");
+    //debug_log("MMU", "Load ROM Complete");
 
     set_up_registers();
-    REGISTERS.PC = 0x00;
+    REGISTERS.PC = 0x100;
 
     for(;;) {
         step_CPU();

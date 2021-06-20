@@ -125,9 +125,11 @@ int decode(u_int8_t opcode) {
             error_log("CPU", "INSTRUCTION NOT IMPLEMENTED");
             exit(-1);
         case 0x20:
-            printf("LD, SP, u16\n");
-            LD_16(&REGISTERS.SP, read_16(REGISTERS.PC + 1));
-            return 3;
+            printf("JR NZ i8\n");
+            printf("Jumping to: %X\n", read_8(REGISTERS.PC + 1));
+
+            JR_NZ_N(&REGISTERS.PC, read_8(REGISTERS.PC + 1));
+            return 0;
         case 0x21:
             printf("LD, HL, u16\n");
             LD_16(&REGISTERS.HL, read_16(REGISTERS.PC + 1));
@@ -190,6 +192,10 @@ int decode(u_int8_t opcode) {
             printf("LD, A, u8\n");
             LD_8(&REGISTERS.A, read_8(REGISTERS.PC + 1));
             return 2;
+        case 0x3F:
+            printf("CCF");
+            CCF();
+            return 1;
         case 0x40:
             printf("LD, B, B\n");
             LD_8(&REGISTERS.B, REGISTERS.B);
@@ -244,7 +250,7 @@ int decode(u_int8_t opcode) {
             return 1;
         case 0x73:
             printf("LD, [HL], E\n");
-            LD_8(&RAM.bootstrap[REGISTERS.HL], REGISTERS.E);
+            LD_8_RAM(read_16(REGISTERS.HL), REGISTERS.E);
             return 1;
         case 0x77:
             printf("LD [HL], A\n");
@@ -342,6 +348,11 @@ int decode(u_int8_t opcode) {
             printf("POP, BC\n");
             POP_16(&REGISTERS.BC);
             return 1;
+        case 0xC3:
+            printf("JP u16\n");
+            printf("Val to jump to: %x\n",read_16(REGISTERS.PC + 1));
+            JP_16(&REGISTERS.PC, read_16(REGISTERS.PC + 1));
+            return 0;
         case 0xC5:
             printf("PUSH, BC\n");
             PUSH_16(REGISTERS.BC);
@@ -453,6 +464,7 @@ int decode(u_int8_t opcode) {
         default:
             error_log("CPU", "OP CODE not implemented!");
             printf("Op Code Not Implemented!\n");
+            print_reg_vals();
             exit(-1);
 
     }
@@ -689,6 +701,18 @@ void RET_C(void)
         POP_16(&REGISTERS.PC);
     }
 }
+
+void CCF(void)
+{
+    if(FLAG_IS_SET(C_FLAG, REGISTERS.F)) {
+        FLAG_CLEAR(C_FLAG, REGISTERS.F);
+    } else {
+        FLAG_SET(C_FLAG, REGISTERS.F);
+    }
+    FLAG_CLEAR(H_FLAG, REGISTERS.F);
+    FLAG_CLEAR(N_FLAG, REGISTERS.F);
+
+}
 /*                         *
  * 8-bit Increment         *
  * ------------------------*/
@@ -792,6 +816,18 @@ void POP_16(u_int16_t *dest)
     REGISTERS.SP += 2;
 }
 
+void JP_16(u_int16_t *dest, u_int16_t operand)
+{
+    *dest = operand;
+}
+
+void JR_NZ_N(u_int16_t * dest, u_int8_t operand)
+{
+    if(Z_FLAG != 0)
+    {
+        *dest += (int8_t)(operand + 1);
+    }
+}
 /*        *
  * Other  *
  * -------*/
